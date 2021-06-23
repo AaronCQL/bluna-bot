@@ -1,0 +1,21 @@
+{
+  "name": "bluna-bot-cli",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "author": "Aaron Choo",
+  "license": "MIT",
+  "scripts": {
+    "dev": "yarn clean && tsc-watch --onSuccess 'node ./dist'",
+    "build": "yarn clean && tsc",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "bluna-bot-pkg": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.4",
+    "rimraf": "^3.0.2",
+    "tsc-watch": "^4.4.0",
+    "typescript": "^4.3.4"
+  }
+}

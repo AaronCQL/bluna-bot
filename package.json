@@ -1,0 +1,11 @@
+{
+  "name": "bluna-bot",
+  "version": "0.1.0",
+  "author": "Aaron Choo",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "bluna-bot-cli",
+    "bluna-bot-pkg"
+  ]
+}
