@@ -26,3 +26,19 @@ export type SwapSimulationResponse = {
   spread_amount: string;
   commission_amount: string;
 };
+
+export type BlunaBalanceQueryMessage = {
+  balance: {
+    address: string;
+  };
+};
+
+export type BlunaBalanceResponse = {
+  balance: string;
+};
+
+export type WalletBalance = {
+  uust: string;
+  uluna: string;
+  ubluna: string;
+};
