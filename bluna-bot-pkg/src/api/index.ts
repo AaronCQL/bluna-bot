@@ -1,4 +1,9 @@
-import { Coins, MnemonicKey, MsgExecuteContract } from "@terra-money/terra.js";
+import {
+  Coins,
+  MnemonicKey,
+  MsgExecuteContract,
+  BlockTxBroadcastResult,
+} from "@terra-money/terra.js";
 
 import {
   BlunaBalanceQueryMessage,
@@ -92,7 +97,7 @@ export async function swapLunaToBluna(
   walletMnemonic: string,
   lunaAmount: number,
   expectedBlunaAmount: number
-) {
+): Promise<BlockTxBroadcastResult> {
   const wallet = terra.wallet(
     new MnemonicKey({
       mnemonic: walletMnemonic,
@@ -147,7 +152,7 @@ export async function swapLunaToBluna(
 export async function swapBlunaToLuna(
   walletMnemonic: string,
   blunaAmount: number
-) {
+): Promise<BlockTxBroadcastResult> {
   const wallet = terra.wallet(
     new MnemonicKey({
       mnemonic: walletMnemonic,
