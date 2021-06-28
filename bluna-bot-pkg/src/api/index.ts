@@ -1,6 +1,10 @@
+import { Coins, MnemonicKey, MsgExecuteContract } from "@terra-money/terra.js";
+
 import {
   BlunaBalanceQueryMessage,
   BlunaBalanceResponse,
+  IncreaseAllowanceHandleMessage,
+  SwapLunaToBlunaHandleMessage,
   SwapSimulationQueryMessage,
   SwapSimulationResponse,
   WalletBalance,
@@ -80,4 +84,60 @@ export async function getWalletBalance(
     uluna: coins.get("uluna")?.amount.toString() ?? "0",
     ubluna: blunaBalance,
   };
+}
+
+export async function swapLunaToBluna(
+  walletMnemonic: string,
+  lunaAmount: number,
+  expectedBlunaAmount: number
+) {
+  const wallet = terra.wallet(
+    new MnemonicKey({
+      mnemonic: walletMnemonic,
+    })
+  );
+
+  // increase allowance
+  const increaseAllowanceHandleMessage: IncreaseAllowanceHandleMessage = {
+    increase_allowance: {
+      amount: toMicroAmount(expectedBlunaAmount).toString(),
+      spender: LUNA_TO_BLUNA_SWAP_CONTRACT_ADDRESS,
+    },
+  };
+  const executeIncreaseAllowance = new MsgExecuteContract(
+    wallet.key.accAddress,
+    BLUNA_CONTRACT_ADDRESS,
+    increaseAllowanceHandleMessage
+  );
+
+  // swap
+  const swapHandleMessage: SwapLunaToBlunaHandleMessage = {
+    swap: {
+      offer_asset: {
+        amount: toMicroAmount(lunaAmount).toString(),
+        info: {
+          native_token: {
+            denom: "uluna",
+          },
+        },
+      },
+    },
+  };
+  const swapCoins = new Coins({
+    uluna: toMicroAmount(lunaAmount),
+  });
+  const executeSwap = new MsgExecuteContract(
+    wallet.key.accAddress,
+    LUNA_TO_BLUNA_SWAP_CONTRACT_ADDRESS,
+    swapHandleMessage,
+    swapCoins
+  );
+
+  const transaction = await wallet.createAndSignTx({
+    msgs: [executeIncreaseAllowance, executeSwap],
+  });
+
+  const result = await terra.tx.broadcast(transaction);
+
+  return result;
 }

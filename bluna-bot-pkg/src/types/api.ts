@@ -1,4 +1,7 @@
-import { BLUNA_CONTRACT_ADDRESS } from "../utils";
+import {
+  BLUNA_CONTRACT_ADDRESS,
+  LUNA_TO_BLUNA_SWAP_CONTRACT_ADDRESS,
+} from "../utils";
 
 export type SwapSimulationQueryMessage = {
   simulation: {
@@ -41,4 +44,24 @@ export type WalletBalance = {
   uust: string;
   uluna: string;
   ubluna: string;
+};
+
+export type IncreaseAllowanceHandleMessage = {
+  increase_allowance: {
+    amount: string;
+    spender: typeof LUNA_TO_BLUNA_SWAP_CONTRACT_ADDRESS;
+  };
+};
+
+export type SwapLunaToBlunaHandleMessage = {
+  swap: {
+    offer_asset: {
+      amount: string;
+      info: {
+        native_token: {
+          denom: "uluna";
+        };
+      };
+    };
+  };
 };
