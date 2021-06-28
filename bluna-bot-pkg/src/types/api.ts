@@ -1,6 +1,7 @@
 import {
+  BASE64_EMPTY_SWAP_MESSAGE,
   BLUNA_CONTRACT_ADDRESS,
-  LUNA_TO_BLUNA_SWAP_CONTRACT_ADDRESS,
+  LUNA_BLUNA_SWAP_CONTRACT_ADDRESS,
 } from "../utils";
 
 export type SwapSimulationQueryMessage = {
@@ -49,7 +50,7 @@ export type WalletBalance = {
 export type IncreaseAllowanceHandleMessage = {
   increase_allowance: {
     amount: string;
-    spender: typeof LUNA_TO_BLUNA_SWAP_CONTRACT_ADDRESS;
+    spender: typeof LUNA_BLUNA_SWAP_CONTRACT_ADDRESS;
   };
 };
 
@@ -63,5 +64,13 @@ export type SwapLunaToBlunaHandleMessage = {
         };
       };
     };
+  };
+};
+
+export type SwapBlunaToLunaHandleMessage = {
+  send: {
+    amount: string;
+    contract: typeof LUNA_BLUNA_SWAP_CONTRACT_ADDRESS;
+    msg: typeof BASE64_EMPTY_SWAP_MESSAGE; // base64 encoding for `{"swap":{}}`
   };
 };
