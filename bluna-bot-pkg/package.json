@@ -1,17 +1,18 @@
 {
   "name": "bluna-bot-pkg",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": [
-    "/dist"
-  ],
   "author": "Aaron Choo",
   "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "yarn clean && tsc --watch",
     "build": "yarn clean && tsc",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "prepublish": "yarn build"
   },
   "dependencies": {
     "@terra-money/terra.js": "^1.8.4"
