@@ -32,10 +32,11 @@ export async function run(config: Config): Promise<void> {
     interval = DEFAULT_INTERVAL,
     minPercentageGain = DEFAULT_MIN_PERCENTAGE_GAIN,
     maxPercentageLoss = DEFAULT_MAX_PERCENTAGE_LOSS,
-    maxSwapAmount = DEFAULT_MAX_SWAP_AMOUNT,
     minSwapAmount = DEFAULT_MIN_SWAP_AMOUNT,
+    maxSwapAmount = DEFAULT_MAX_SWAP_AMOUNT,
     onSuccess = DEFAULT_CALLBACK,
     onError = DEFAULT_CALLBACK,
+    debug = DEFAULT_CALLBACK,
   } = config;
 
   const walletBalance = await getWalletBalance(walletAddress);
@@ -65,33 +66,40 @@ export async function run(config: Config): Promise<void> {
     expectedLunaAmount
   );
 
-  let res: BlockTxBroadcastResult | undefined;
+  const shouldSwapLuna =
+    lunaBalance >= minSwapAmount && lunaSwapPremium >= minPercentageGain;
+  const shouldSwapBluna =
+    blunaBalance >= minSwapAmount && blunaSwapPremium <= maxPercentageLoss;
+  const transactionResult: BlockTxBroadcastResult | undefined = shouldSwapLuna
+    ? await swapLunaToBluna(walletMnemonic, lunaBalance, expectedBlunaAmount)
+    : shouldSwapBluna
+    ? await swapBlunaToLuna(walletMnemonic, blunaBalance)
+    : undefined;
 
-  if (lunaBalance >= minSwapAmount && lunaSwapPremium >= minPercentageGain) {
-    res = await swapLunaToBluna(
-      walletMnemonic,
-      lunaBalance,
-      expectedBlunaAmount
-    );
-  }
-
-  if (blunaBalance >= minSwapAmount && blunaSwapPremium <= maxPercentageLoss) {
-    res = await swapBlunaToLuna(walletMnemonic, blunaBalance);
-  }
-
-  if (res === undefined) {
+  if (transactionResult === undefined) {
     // neither swap occurred
   } else {
-    if (isTxError(res)) {
-      await onError(res);
+    if (isTxError(transactionResult)) {
+      await onError(transactionResult);
     } else {
-      await onSuccess(res);
+      await onSuccess(transactionResult);
     }
   }
 
   if (shouldContinueRunning) {
     setTimeout(() => run(config), toMicroSeconds(interval));
   }
+
+  await debug({
+    initialWalletBalance: walletBalance,
+    availableLunaAmount: lunaBalance,
+    lunaSwapSimulation,
+    lunaSwapPremium,
+    availableBlunaAmount: blunaBalance,
+    blunaSwapSimulation,
+    blunaSwapPremium,
+    transactionResult,
+  });
 }
 
 export function stop(): void {
