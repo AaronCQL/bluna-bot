@@ -8,13 +8,17 @@ import {
   swapLunaToBluna,
   swapBlunaToLuna,
 } from "../api";
-import { toMicroSeconds, fromMicroAmount, calculatePremium } from "../utils";
-
-const DEFAULT_INTERVAL = 2;
-const DEFAULT_LUNA_TO_BLUNA_PREMIUM_THRESHOLD = 10;
-const DEFAULT_BLUNA_TO_LUNA_PREMIUM_THRESHOLD = 1.5;
-const DEFAULT_MAX_SWAP_AMOUNT = 2500;
-const DEFAULT_MIN_SWAP_AMOUNT = 10;
+import {
+  toMicroSeconds,
+  fromMicroAmount,
+  calculatePremium,
+  DEFAULT_INTERVAL,
+  DEFAULT_LUNA_TO_BLUNA_PREMIUM_THRESHOLD,
+  DEFAULT_BLUNA_TO_LUNA_PREMIUM_THRESHOLD,
+  DEFAULT_MAX_SWAP_AMOUNT,
+  DEFAULT_MIN_SWAP_AMOUNT,
+  DEFAULT_CALLBACK,
+} from "../utils";
 
 let shouldContinueRunning = true;
 
@@ -27,8 +31,8 @@ export async function run(config: Config): Promise<void> {
     blunaToLunaPremiumThreshold = DEFAULT_BLUNA_TO_LUNA_PREMIUM_THRESHOLD,
     maxSwapAmount = DEFAULT_MAX_SWAP_AMOUNT,
     minSwapAmount = DEFAULT_MIN_SWAP_AMOUNT,
-    onSuccess = () => {},
-    onError = () => {},
+    onSuccess = DEFAULT_CALLBACK,
+    onError = DEFAULT_CALLBACK,
   } = config;
 
   const walletBalance = await getWalletBalance(walletAddress);
