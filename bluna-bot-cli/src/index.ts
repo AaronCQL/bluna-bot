@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { program } from "commander";
 import chalk from "chalk";
 import clear from "clear";
@@ -12,18 +14,22 @@ import {
   stop,
 } from "bluna-bot-pkg";
 
+const VERSION: string = require("../package.json").version;
+
 function greet() {
-  const banner = figlet.textSync("bLUNA Bot", {
-    font: "Big Money-ne",
-  });
-  console.log(chalk.bold.green(banner));
+  const banner = figlet
+    .textSync("bLUNA Bot", {
+      font: "Big Money-ne",
+    })
+    .trim();
+  console.log("\n", chalk.bold.green(banner), "\n");
 }
 
 function initConfig() {
   program
-    .version("0.1.0")
+    .version(VERSION)
     .name("bluna-bot")
-    .usage('-a "wallet address here" -m "wallet menomic here" [options]')
+    .usage('-a "wallet address here" -m "wallet mnemonic here" [options]')
     .description("CLI tool to automate swapping between LUNA and bLUNA")
     .requiredOption("-a, --address <wallet address>", "Terra wallet address")
     .requiredOption(
