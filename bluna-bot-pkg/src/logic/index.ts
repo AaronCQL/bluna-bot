@@ -13,8 +13,8 @@ import {
   fromMicroAmount,
   calculatePremium,
   DEFAULT_INTERVAL,
-  DEFAULT_LUNA_TO_BLUNA_PREMIUM_THRESHOLD,
-  DEFAULT_BLUNA_TO_LUNA_PREMIUM_THRESHOLD,
+  DEFAULT_MIN_PERCENTAGE_GAIN,
+  DEFAULT_MAX_PERCENTAGE_LOSS,
   DEFAULT_MAX_SWAP_AMOUNT,
   DEFAULT_MIN_SWAP_AMOUNT,
   DEFAULT_CALLBACK,
@@ -23,12 +23,15 @@ import {
 let shouldContinueRunning = true;
 
 export async function run(config: Config): Promise<void> {
+  // reset to true in case it was set to false
+  shouldContinueRunning = true;
+
   const {
     walletAddress,
     walletMnemonic,
     interval = DEFAULT_INTERVAL,
-    lunaToBlunaPremiumThreshold = DEFAULT_LUNA_TO_BLUNA_PREMIUM_THRESHOLD,
-    blunaToLunaPremiumThreshold = DEFAULT_BLUNA_TO_LUNA_PREMIUM_THRESHOLD,
+    minPercentageGain = DEFAULT_MIN_PERCENTAGE_GAIN,
+    maxPercentageLoss = DEFAULT_MAX_PERCENTAGE_LOSS,
     maxSwapAmount = DEFAULT_MAX_SWAP_AMOUNT,
     minSwapAmount = DEFAULT_MIN_SWAP_AMOUNT,
     onSuccess = DEFAULT_CALLBACK,
@@ -64,10 +67,7 @@ export async function run(config: Config): Promise<void> {
 
   let res: BlockTxBroadcastResult | undefined;
 
-  if (
-    lunaBalance >= minSwapAmount &&
-    lunaSwapPremium >= lunaToBlunaPremiumThreshold
-  ) {
+  if (lunaBalance >= minSwapAmount && lunaSwapPremium >= minPercentageGain) {
     res = await swapLunaToBluna(
       walletMnemonic,
       lunaBalance,
@@ -75,10 +75,7 @@ export async function run(config: Config): Promise<void> {
     );
   }
 
-  if (
-    blunaBalance >= minSwapAmount &&
-    blunaSwapPremium <= blunaToLunaPremiumThreshold
-  ) {
+  if (blunaBalance >= minSwapAmount && blunaSwapPremium <= maxPercentageLoss) {
     res = await swapBlunaToLuna(walletMnemonic, blunaBalance);
   }
 
