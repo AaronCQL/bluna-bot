@@ -11,8 +11,11 @@ import {
   IncreaseAllowanceHandleMessage,
   SwapBlunaToLunaHandleMessage,
   SwapLunaToBlunaHandleMessage,
-  SwapSimulationQueryMessage,
-  SwapSimulationResponse,
+  SwapLunaToBlunaSimulationQueryMessage,
+  SwapBlunaToLunaSimulationQueryMessage,
+  SwapLunaToBlunaSimulationResponse,
+  SwapBlunaToLunaSimulationResponse,
+  SwapSimulationContractResponse,
   WalletBalance,
 } from "../types";
 import {
@@ -21,12 +24,15 @@ import {
   LUNA_BLUNA_SWAP_CONTRACT_ADDRESS,
   BLUNA_CONTRACT_ADDRESS,
   BASE64_EMPTY_SWAP_MESSAGE,
+  calculatePercentageGain,
+  fromMicroAmount,
+  calculatePercentageLoss,
 } from "../utils";
 
 export async function simulateLunaToBlunaSwap(
   lunaAmount: number = 1
-): Promise<SwapSimulationResponse> {
-  const queryMessage: SwapSimulationQueryMessage = {
+): Promise<SwapLunaToBlunaSimulationResponse> {
+  const queryMessage: SwapLunaToBlunaSimulationQueryMessage = {
     simulation: {
       offer_asset: {
         amount: toMicroAmount(lunaAmount).toString(),
@@ -39,16 +45,26 @@ export async function simulateLunaToBlunaSwap(
     },
   };
 
-  return terra.wasm.contractQuery(
-    LUNA_BLUNA_SWAP_CONTRACT_ADDRESS,
-    queryMessage
-  ) as Promise<SwapSimulationResponse>;
+  const contractResponse: SwapSimulationContractResponse =
+    await terra.wasm.contractQuery(
+      LUNA_BLUNA_SWAP_CONTRACT_ADDRESS,
+      queryMessage
+    );
+  const percentageGain = calculatePercentageGain(
+    lunaAmount,
+    fromMicroAmount(contractResponse.return_amount)
+  );
+
+  return {
+    contractResponse,
+    percentageGain,
+  };
 }
 
 export async function simulateBlunaToLunaSwap(
   blunaAmount: number = 1
-): Promise<SwapSimulationResponse> {
-  const queryMessage: SwapSimulationQueryMessage = {
+): Promise<SwapBlunaToLunaSimulationResponse> {
+  const queryMessage: SwapBlunaToLunaSimulationQueryMessage = {
     simulation: {
       offer_asset: {
         amount: toMicroAmount(blunaAmount).toString(),
@@ -61,10 +77,20 @@ export async function simulateBlunaToLunaSwap(
     },
   };
 
-  return terra.wasm.contractQuery(
-    LUNA_BLUNA_SWAP_CONTRACT_ADDRESS,
-    queryMessage
-  ) as Promise<SwapSimulationResponse>;
+  const contractResponse: SwapSimulationContractResponse =
+    await terra.wasm.contractQuery(
+      LUNA_BLUNA_SWAP_CONTRACT_ADDRESS,
+      queryMessage
+    );
+  const percentageLoss = calculatePercentageLoss(
+    blunaAmount,
+    fromMicroAmount(contractResponse.return_amount)
+  );
+
+  return {
+    contractResponse,
+    percentageLoss,
+  };
 }
 
 export async function getWalletBalance(

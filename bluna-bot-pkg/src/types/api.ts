@@ -4,31 +4,46 @@ import {
   LUNA_BLUNA_SWAP_CONTRACT_ADDRESS,
 } from "../utils";
 
-export type SwapSimulationQueryMessage = {
+export type SwapLunaToBlunaSimulationQueryMessage = {
   simulation: {
     offer_asset: {
       amount: string;
-      info:
-        | {
-            // luna to bluna
-            native_token: {
-              denom: "uluna";
-            };
-          }
-        | {
-            // bluna to luna
-            token: {
-              contract_addr: typeof BLUNA_CONTRACT_ADDRESS;
-            };
-          };
+      info: {
+        native_token: {
+          denom: "uluna";
+        };
+      };
     };
   };
 };
 
-export type SwapSimulationResponse = {
+export type SwapBlunaToLunaSimulationQueryMessage = {
+  simulation: {
+    offer_asset: {
+      amount: string;
+      info: {
+        token: {
+          contract_addr: typeof BLUNA_CONTRACT_ADDRESS;
+        };
+      };
+    };
+  };
+};
+
+export type SwapSimulationContractResponse = {
   return_amount: string;
   spread_amount: string;
   commission_amount: string;
+};
+
+export type SwapLunaToBlunaSimulationResponse = {
+  contractResponse: SwapSimulationContractResponse;
+  percentageGain: number;
+};
+
+export type SwapBlunaToLunaSimulationResponse = {
+  contractResponse: SwapSimulationContractResponse;
+  percentageLoss: number;
 };
 
 export type BlunaBalanceQueryMessage = {

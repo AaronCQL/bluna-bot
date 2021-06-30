@@ -1,6 +1,10 @@
 import { BlockTxBroadcastResult } from "@terra-money/terra.js";
 
-import { SwapSimulationResponse, WalletBalance } from "./api";
+import {
+  SwapLunaToBlunaSimulationResponse,
+  SwapBlunaToLunaSimulationResponse,
+  WalletBalance,
+} from "./api";
 
 export type CallbackFunction = (
   transactionResult?: BlockTxBroadcastResult | undefined
@@ -9,11 +13,9 @@ export type CallbackFunction = (
 export type DebugFunction = (info: {
   initialWalletBalance?: WalletBalance | undefined;
   availableLunaAmount?: number | undefined;
-  lunaSwapSimulation?: SwapSimulationResponse | undefined;
-  lunaSwapPremium?: number | undefined;
+  swapLunaToBlunaSimulation?: SwapLunaToBlunaSimulationResponse | undefined;
   availableBlunaAmount?: number | undefined;
-  blunaSwapSimulation?: SwapSimulationResponse | undefined;
-  blunaSwapPremium?: number | undefined;
+  swapBlunaToLunaSimulation?: SwapBlunaToLunaSimulationResponse | undefined;
   transactionResult?: BlockTxBroadcastResult | undefined;
 }) => any;
 

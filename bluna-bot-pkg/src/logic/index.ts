@@ -11,7 +11,6 @@ import {
 import {
   toMicroSeconds,
   fromMicroAmount,
-  calculatePremium,
   DEFAULT_INTERVAL,
   DEFAULT_MIN_PERCENTAGE_GAIN,
   DEFAULT_MAX_PERCENTAGE_LOSS,
@@ -23,7 +22,7 @@ import {
 let shouldContinueRunning = true;
 
 export async function run(config: Config): Promise<void> {
-  // reset to true in case it was set to false
+  // set to true in case it was set to false
   shouldContinueRunning = true;
 
   const {
@@ -49,29 +48,26 @@ export async function run(config: Config): Promise<void> {
     maxSwapAmount
   );
 
-  const [lunaSwapSimulation, blunaSwapSimulation] = await Promise.all([
-    simulateLunaToBlunaSwap(lunaBalance),
-    simulateBlunaToLunaSwap(blunaBalance),
-  ]);
-
-  const expectedBlunaAmount = fromMicroAmount(lunaSwapSimulation.return_amount);
-  const lunaSwapPremium = calculatePremium(
-    Math.min(maxSwapAmount, lunaBalance),
-    expectedBlunaAmount
-  );
-
-  const expectedLunaAmount = fromMicroAmount(blunaSwapSimulation.return_amount);
-  const blunaSwapPremium = calculatePremium(
-    Math.min(maxSwapAmount, blunaBalance),
-    expectedLunaAmount
-  );
+  const [swapLunaToBlunaSimulation, swapBlunaToLunaSimulation] =
+    await Promise.all([
+      simulateLunaToBlunaSwap(lunaBalance),
+      simulateBlunaToLunaSwap(blunaBalance),
+    ]);
 
   const shouldSwapLuna =
-    lunaBalance >= minSwapAmount && lunaSwapPremium >= minPercentageGain;
+    lunaBalance >= minSwapAmount &&
+    swapLunaToBlunaSimulation.percentageGain >= minPercentageGain;
   const shouldSwapBluna =
-    blunaBalance >= minSwapAmount && blunaSwapPremium <= maxPercentageLoss;
+    blunaBalance >= minSwapAmount &&
+    swapBlunaToLunaSimulation.percentageLoss <= maxPercentageLoss;
   const transactionResult: BlockTxBroadcastResult | undefined = shouldSwapLuna
-    ? await swapLunaToBluna(walletMnemonic, lunaBalance, expectedBlunaAmount)
+    ? await swapLunaToBluna(
+        walletMnemonic,
+        lunaBalance,
+        fromMicroAmount(
+          swapLunaToBlunaSimulation.contractResponse.return_amount
+        )
+      )
     : shouldSwapBluna
     ? await swapBlunaToLuna(walletMnemonic, blunaBalance)
     : undefined;
@@ -93,11 +89,9 @@ export async function run(config: Config): Promise<void> {
   await debug({
     initialWalletBalance: walletBalance,
     availableLunaAmount: lunaBalance,
-    lunaSwapSimulation,
-    lunaSwapPremium,
+    swapLunaToBlunaSimulation,
     availableBlunaAmount: blunaBalance,
-    blunaSwapSimulation,
-    blunaSwapPremium,
+    swapBlunaToLunaSimulation,
     transactionResult,
   });
 }

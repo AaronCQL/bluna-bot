@@ -10,8 +10,10 @@ export function toMicroSeconds(seconds: number): number {
   return seconds * 1000;
 }
 
-export function calculatePremium(x: number, y: number) {
-  const largerNum = Math.max(x, y);
-  const smallerNum = Math.min(x, y);
-  return ((largerNum - smallerNum) / smallerNum) * 100;
+export function calculatePercentageGain(from: number, to: number) {
+  return ((to - from) / from) * 100;
+}
+
+export function calculatePercentageLoss(from: number, to: number) {
+  return ((from - to) / from) * 100;
 }
