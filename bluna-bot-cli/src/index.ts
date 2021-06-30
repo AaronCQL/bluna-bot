@@ -10,8 +10,8 @@ import {
   DEFAULT_MAX_PERCENTAGE_LOSS,
   DEFAULT_MIN_SWAP_AMOUNT,
   DEFAULT_MAX_SWAP_AMOUNT,
+  Config,
   run,
-  stop,
 } from "bluna-bot-pkg";
 
 const VERSION: string = require("../package.json").version;
@@ -73,6 +73,23 @@ function parseArgs() {
   return program.parse(process.argv).opts();
 }
 
+function printConfig(
+  interval: number,
+  minGain: number,
+  maxLoss: number,
+  minSwapAmount: number,
+  maxSwapAmount: number
+) {
+  console.log(
+    chalk.bold("Running with the following configurations:\n") +
+      ` - Interval: ${interval} seconds\n` +
+      ` - Minimum percentage gain: ${minGain}%\n` +
+      ` - Maximum percentage loss: ${maxLoss}%\n` +
+      ` - Minimum swap amount: ${minSwapAmount}\n` +
+      ` - Maximum swap amount: ${maxSwapAmount}\n`
+  );
+}
+
 async function main() {
   // clear console text
   clear();
@@ -91,9 +108,10 @@ async function main() {
     maxSwapAmount,
     verbose,
   } = parseArgs();
+  // print config back to user
+  printConfig(interval, minGain, maxLoss, minSwapAmount, maxSwapAmount);
 
-  // run the program
-  await run({
+  const botConfig: Config = {
     walletAddress: address,
     walletMnemonic: mnemonic,
     interval: interval,
@@ -106,7 +124,18 @@ async function main() {
         console.log("debug:", info, "\n");
       }
     },
-  });
+    onSwapSuccess: (transactionResult) => {
+      console.log(chalk.bold.green("Swap success!"));
+      console.log("transaction result:", transactionResult, "\n");
+    },
+    onSwapError: (transactionResult) => {
+      console.log(chalk.bold.red("Swap error!"));
+      console.log("transaction result:", transactionResult, "\n");
+    },
+  };
+
+  // run the program
+  await run(botConfig);
 }
 
 main();

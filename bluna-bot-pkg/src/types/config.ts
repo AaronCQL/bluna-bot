@@ -27,7 +27,7 @@ export type Config = {
   maxPercentageLoss?: number | undefined; // max percentage loss when swapping bluna for luna
   minSwapAmount?: number | undefined; // min number of luna or bluna to swap at one go
   maxSwapAmount?: number | undefined; // max number of luna or bluna to swap at one go
-  onSuccess?: CallbackFunction | undefined;
-  onError?: CallbackFunction | undefined;
+  onSwapSuccess?: CallbackFunction | undefined;
+  onSwapError?: CallbackFunction | undefined;
   debug?: DebugFunction | undefined;
 };

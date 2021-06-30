@@ -33,8 +33,8 @@ export async function run(config: Config): Promise<void> {
     maxPercentageLoss = DEFAULT_MAX_PERCENTAGE_LOSS,
     minSwapAmount = DEFAULT_MIN_SWAP_AMOUNT,
     maxSwapAmount = DEFAULT_MAX_SWAP_AMOUNT,
-    onSuccess = DEFAULT_CALLBACK,
-    onError = DEFAULT_CALLBACK,
+    onSwapSuccess = DEFAULT_CALLBACK,
+    onSwapError = DEFAULT_CALLBACK,
     debug = DEFAULT_CALLBACK,
   } = config;
 
@@ -76,9 +76,9 @@ export async function run(config: Config): Promise<void> {
     // neither swap occurred
   } else {
     if (isTxError(transactionResult)) {
-      await onError(transactionResult);
+      await onSwapError(transactionResult);
     } else {
-      await onSuccess(transactionResult);
+      await onSwapSuccess(transactionResult);
     }
   }
 

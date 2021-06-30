@@ -38,7 +38,7 @@ Display the current version:
 bluna-bot -V
 ```
 
-Use the `--verbose` option to print out debug information for every run:
+Use the `--verbose` option to print out debug information for every run (not recommended):
 
 ```sh
 bluna-bot [options] --verbose
