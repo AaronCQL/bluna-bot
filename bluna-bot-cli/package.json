@@ -1,6 +1,6 @@
 {
   "name": "bluna-bot-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "dist/index.js",
   "author": "Aaron Choo",
   "license": "MIT",
@@ -19,7 +19,7 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
-    "bluna-bot-pkg": "0.1.1",
+    "bluna-bot-pkg": "0.1.2",
     "chalk": "^4.1.1",
     "clear": "^0.1.0",
     "commander": "^8.0.0",
