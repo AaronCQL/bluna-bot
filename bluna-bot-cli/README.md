@@ -55,8 +55,14 @@ Other than the wallet address and wallet mnemonic, all other fields are optional
   - eg. if `<percentage>` is 13, the swap will only commence if swapping the current amount of LUNA will net a 13% increase in the corresponding bLUNA amount
 - `--max-loss <percentage>`: maximum percentage loss when swapping bLUNA for LUNA
   - eg. if `<percentage>` is 1.5, the swap will only commence if swapping the current amount of bLUNA will net a 1.5% decrease in the corresponding LUNA amount
-- `--min-swap-amount <amount>`: minimum number of LUNA or bLUNA to use when swapping
-- `--max-swap-amount <amount>`: maximum number of LUNA or bLUNA to use when swapping
+- `--min-luna-swap-amount <amount>`: minimum number of LUNA to use when swapping
+- `--max-luna-swap-amount <amount>`: maximum number of LUNA to use when swapping
+- `--min-bluna-swap-amount <amount>`: minimum number of bLUNA to use when swapping
+- `--max-bluna-swap-amount <amount>`: maximum number of bLUNA to use when swapping
+- `--stop-on-errors`: when present, stops execution of the program when met with any unknown errors
+  - Be default, unknown errors are ignored since queries to the blockchain may occasionally throw network errors
+- `--verbose`: when present, prints out debug information for every run
+  - Not recommended unless developing or debugging
 
 ### Example
 

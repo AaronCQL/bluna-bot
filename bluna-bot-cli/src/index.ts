@@ -78,6 +78,7 @@ function initConfig() {
       Number,
       DEFAULT_MAX_SWAP_AMOUNT
     )
+    .option("--stop-on-errors", "stops program on unknown errors")
     .option("--verbose", "prints out debug information for every run");
 }
 
@@ -92,7 +93,8 @@ function printConfig(
   minLunaSwapAmount: number,
   maxLunaSwapAmount: number,
   minBlunaSwapAmount: number,
-  maxBlunaSwapAmount: number
+  maxBlunaSwapAmount: number,
+  stopOnErrors: boolean
 ) {
   console.log(
     chalk.bold("Running with the following configurations:\n") +
@@ -102,8 +104,31 @@ function printConfig(
       ` - Minimum LUNA swap amount: ${minLunaSwapAmount}\n` +
       ` - Maximum LUNA swap amount: ${maxLunaSwapAmount}\n` +
       ` - Minimum bLUNA swap amount: ${minBlunaSwapAmount}\n` +
-      ` - Maximum bLUNA swap amount: ${maxBlunaSwapAmount}\n`
+      ` - Maximum bLUNA swap amount: ${maxBlunaSwapAmount}\n` +
+      ` - On encountering unknown errors: ${
+        stopOnErrors ? "stop program" : "ignore and continue program"
+      }\n`
   );
+}
+
+async function runBot(botConfig: Config, stopOnErrors: boolean) {
+  try {
+    await run(botConfig);
+  } catch (error) {
+    console.log(error);
+    if (stopOnErrors) {
+      console.log(
+        chalk.bold.red("\nUnknown error encountered!"),
+        "Stopping program...\n"
+      );
+    } else {
+      console.log(
+        chalk.bold.red("\nUnknown error encountered!"),
+        "Ignoring and continuing the program...\n"
+      );
+      await runBot(botConfig, stopOnErrors);
+    }
+  }
 }
 
 async function main() {
@@ -124,6 +149,7 @@ async function main() {
     maxLunaSwapAmount,
     minBlunaSwapAmount,
     maxBlunaSwapAmount,
+    stopOnErrors,
     verbose,
   } = parseArgs();
   // print config back to user
@@ -134,7 +160,8 @@ async function main() {
     minLunaSwapAmount,
     maxLunaSwapAmount,
     minBlunaSwapAmount,
-    maxBlunaSwapAmount
+    maxBlunaSwapAmount,
+    stopOnErrors
   );
 
   const botConfig: Config = {
@@ -163,7 +190,7 @@ async function main() {
   };
 
   // run the program
-  await run(botConfig);
+  await runBot(botConfig, stopOnErrors);
 }
 
 main();
