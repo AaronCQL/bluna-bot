@@ -31,8 +31,10 @@ export async function run(config: Config): Promise<void> {
     interval = DEFAULT_INTERVAL,
     minPercentageGain = DEFAULT_MIN_PERCENTAGE_GAIN,
     maxPercentageLoss = DEFAULT_MAX_PERCENTAGE_LOSS,
-    minSwapAmount = DEFAULT_MIN_SWAP_AMOUNT,
-    maxSwapAmount = DEFAULT_MAX_SWAP_AMOUNT,
+    minLunaSwapAmount = DEFAULT_MIN_SWAP_AMOUNT,
+    maxLunaSwapAmount = DEFAULT_MAX_SWAP_AMOUNT,
+    minBlunaSwapAmount = DEFAULT_MIN_SWAP_AMOUNT,
+    maxBlunaSwapAmount = DEFAULT_MAX_SWAP_AMOUNT,
     onSwapSuccess = DEFAULT_CALLBACK,
     onSwapError = DEFAULT_CALLBACK,
     debug = DEFAULT_CALLBACK,
@@ -41,11 +43,11 @@ export async function run(config: Config): Promise<void> {
   const walletBalance = await getWalletBalance(walletAddress);
   const lunaBalance = Math.min(
     fromMicroAmount(walletBalance.uluna),
-    maxSwapAmount
+    maxLunaSwapAmount
   );
   const blunaBalance = Math.min(
     fromMicroAmount(walletBalance.ubluna),
-    maxSwapAmount
+    maxBlunaSwapAmount
   );
 
   const [swapLunaToBlunaSimulation, swapBlunaToLunaSimulation] =
@@ -55,10 +57,10 @@ export async function run(config: Config): Promise<void> {
     ]);
 
   const shouldSwapLuna =
-    lunaBalance >= minSwapAmount &&
+    lunaBalance >= minLunaSwapAmount &&
     swapLunaToBlunaSimulation.percentageGain >= minPercentageGain;
   const shouldSwapBluna =
-    blunaBalance >= minSwapAmount &&
+    blunaBalance >= minBlunaSwapAmount &&
     swapBlunaToLunaSimulation.percentageLoss <= maxPercentageLoss;
   const transactionResult: BlockTxBroadcastResult | undefined = shouldSwapLuna
     ? await swapLunaToBluna(
@@ -88,9 +90,9 @@ export async function run(config: Config): Promise<void> {
 
   await debug({
     initialWalletBalance: walletBalance,
-    availableLunaAmount: lunaBalance,
+    lunaSwapAmount: lunaBalance,
     swapLunaToBlunaSimulation,
-    availableBlunaAmount: blunaBalance,
+    blunaSwapAmount: blunaBalance,
     swapBlunaToLunaSimulation,
     transactionResult,
   });

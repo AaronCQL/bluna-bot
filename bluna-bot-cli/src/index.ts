@@ -55,14 +55,26 @@ function initConfig() {
       DEFAULT_MAX_PERCENTAGE_LOSS
     )
     .option(
-      "--min-swap-amount <amount>",
-      "minimum number of LUNA or bLUNA to use when swapping",
+      "--min-luna-swap-amount <amount>",
+      "minimum number of LUNA to use when swapping",
       Number,
       DEFAULT_MIN_SWAP_AMOUNT
     )
     .option(
-      "--max-swap-amount <amount>",
-      "maximum number of LUNA or bLUNA to use when swapping",
+      "--max-luna-swap-amount <amount>",
+      "maximum number of LUNA to use when swapping",
+      Number,
+      DEFAULT_MAX_SWAP_AMOUNT
+    )
+    .option(
+      "--min-bluna-swap-amount <amount>",
+      "minimum number of bLUNA to use when swapping",
+      Number,
+      DEFAULT_MIN_SWAP_AMOUNT
+    )
+    .option(
+      "--max-bluna-swap-amount <amount>",
+      "maximum number of bLUNA to use when swapping",
       Number,
       DEFAULT_MAX_SWAP_AMOUNT
     )
@@ -77,16 +89,20 @@ function printConfig(
   interval: number,
   minGain: number,
   maxLoss: number,
-  minSwapAmount: number,
-  maxSwapAmount: number
+  minLunaSwapAmount: number,
+  maxLunaSwapAmount: number,
+  minBlunaSwapAmount: number,
+  maxBlunaSwapAmount: number
 ) {
   console.log(
     chalk.bold("Running with the following configurations:\n") +
       ` - Interval: ${interval} seconds\n` +
       ` - Minimum percentage gain: ${minGain}%\n` +
       ` - Maximum percentage loss: ${maxLoss}%\n` +
-      ` - Minimum swap amount: ${minSwapAmount}\n` +
-      ` - Maximum swap amount: ${maxSwapAmount}\n`
+      ` - Minimum LUNA swap amount: ${minLunaSwapAmount}\n` +
+      ` - Maximum LUNA swap amount: ${maxLunaSwapAmount}\n` +
+      ` - Minimum bLUNA swap amount: ${minBlunaSwapAmount}\n` +
+      ` - Maximum bLUNA swap amount: ${maxBlunaSwapAmount}\n`
   );
 }
 
@@ -104,12 +120,22 @@ async function main() {
     interval,
     minGain,
     maxLoss,
-    minSwapAmount,
-    maxSwapAmount,
+    minLunaSwapAmount,
+    maxLunaSwapAmount,
+    minBlunaSwapAmount,
+    maxBlunaSwapAmount,
     verbose,
   } = parseArgs();
   // print config back to user
-  printConfig(interval, minGain, maxLoss, minSwapAmount, maxSwapAmount);
+  printConfig(
+    interval,
+    minGain,
+    maxLoss,
+    minLunaSwapAmount,
+    maxLunaSwapAmount,
+    minBlunaSwapAmount,
+    maxBlunaSwapAmount
+  );
 
   const botConfig: Config = {
     walletAddress: address,
@@ -117,8 +143,10 @@ async function main() {
     interval: interval,
     minPercentageGain: minGain,
     maxPercentageLoss: maxLoss,
-    minSwapAmount: minSwapAmount,
-    maxSwapAmount: maxSwapAmount,
+    minLunaSwapAmount: minLunaSwapAmount,
+    maxLunaSwapAmount: maxLunaSwapAmount,
+    minBlunaSwapAmount: minBlunaSwapAmount,
+    maxBlunaSwapAmount: maxBlunaSwapAmount,
     debug: (info) => {
       if (verbose) {
         console.log("debug:", info, "\n");
