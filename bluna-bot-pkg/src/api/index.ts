@@ -9,6 +9,7 @@ import {
   BlunaBalanceQueryMessage,
   BlunaBalanceResponse,
   IncreaseAllowanceHandleMessage,
+  SwapBlunaToLunaSendMsg,
   SwapBlunaToLunaHandleMessage,
   SwapLunaToBlunaHandleMessage,
   SwapLunaToBlunaSimulationQueryMessage,
@@ -23,7 +24,6 @@ import {
   toMicroAmount,
   LUNA_BLUNA_SWAP_CONTRACT_ADDRESS,
   BLUNA_CONTRACT_ADDRESS,
-  BASE64_EMPTY_SWAP_MESSAGE,
   calculatePercentageGain,
   fromMicroAmount,
   calculatePercentageLoss,
@@ -122,7 +122,8 @@ export async function getWalletBalance(
 export async function swapLunaToBluna(
   walletMnemonic: string,
   lunaAmount: number,
-  expectedBlunaAmount: number
+  expectedBlunaAmount: number,
+  slippagePercentage: number
 ): Promise<BlockTxBroadcastResult> {
   const wallet = terra.wallet(
     new MnemonicKey({
@@ -154,6 +155,8 @@ export async function swapLunaToBluna(
           },
         },
       },
+      belief_price: (lunaAmount / expectedBlunaAmount).toString(),
+      max_spread: (slippagePercentage / 100).toString(),
     },
   };
   const swapCoins = new Coins({
@@ -177,7 +180,9 @@ export async function swapLunaToBluna(
 
 export async function swapBlunaToLuna(
   walletMnemonic: string,
-  blunaAmount: number
+  blunaAmount: number,
+  expectedLunaAmount: number,
+  slippagePercentage: number
 ): Promise<BlockTxBroadcastResult> {
   const wallet = terra.wallet(
     new MnemonicKey({
@@ -185,11 +190,19 @@ export async function swapBlunaToLuna(
     })
   );
 
+  const swapMsg: SwapBlunaToLunaSendMsg = {
+    swap: {
+      belief_price: (blunaAmount / expectedLunaAmount).toString(),
+      max_spread: (slippagePercentage / 100).toString(),
+    },
+  };
+  const base64SwapMsg = Buffer.from(JSON.stringify(swapMsg)).toString("base64");
+
   const swapHandleMessage: SwapBlunaToLunaHandleMessage = {
     send: {
       amount: toMicroAmount(blunaAmount).toString(),
       contract: LUNA_BLUNA_SWAP_CONTRACT_ADDRESS,
-      msg: BASE64_EMPTY_SWAP_MESSAGE,
+      msg: base64SwapMsg,
     },
   };
   const executeSwap = new MsgExecuteContract(

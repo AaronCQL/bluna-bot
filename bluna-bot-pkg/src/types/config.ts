@@ -29,6 +29,7 @@ export type Config = {
   maxLunaSwapAmount?: number | undefined; // max number of luna to swap at one go
   minBlunaSwapAmount?: number | undefined; // min number of luna to swap at one go
   maxBlunaSwapAmount?: number | undefined; // max number of luna to swap at one go
+  slippagePercentage?: number | undefined; // slippage percentage when swapping
   onSwapSuccess?: CallbackFunction | undefined;
   onSwapError?: CallbackFunction | undefined;
   debug?: DebugFunction | undefined;

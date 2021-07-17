@@ -1,5 +1,4 @@
 import {
-  BASE64_EMPTY_SWAP_MESSAGE,
   BLUNA_CONTRACT_ADDRESS,
   LUNA_BLUNA_SWAP_CONTRACT_ADDRESS,
 } from "../utils";
@@ -79,6 +78,15 @@ export type SwapLunaToBlunaHandleMessage = {
         };
       };
     };
+    belief_price: string;
+    max_spread: string;
+  };
+};
+
+export type SwapBlunaToLunaSendMsg = {
+  swap: {
+    belief_price: string;
+    max_spread: string;
   };
 };
 
@@ -86,6 +94,6 @@ export type SwapBlunaToLunaHandleMessage = {
   send: {
     amount: string;
     contract: typeof LUNA_BLUNA_SWAP_CONTRACT_ADDRESS;
-    msg: typeof BASE64_EMPTY_SWAP_MESSAGE; // base64 encoding for `{"swap":{}}`
+    msg: string; // SwapBlunaToLunaSendMsg in base64 encoding
   };
 };

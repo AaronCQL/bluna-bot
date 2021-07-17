@@ -13,4 +13,5 @@ export const DEFAULT_MIN_PERCENTAGE_GAIN = 10;
 export const DEFAULT_MAX_PERCENTAGE_LOSS = 1.5;
 export const DEFAULT_MAX_SWAP_AMOUNT = 2500;
 export const DEFAULT_MIN_SWAP_AMOUNT = 10;
+export const DEFAULT_SLIPPAGE_PERCENTAGE = 0.5;
 export const DEFAULT_CALLBACK = () => {};

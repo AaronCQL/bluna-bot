@@ -17,6 +17,7 @@ import {
   DEFAULT_MAX_SWAP_AMOUNT,
   DEFAULT_MIN_SWAP_AMOUNT,
   DEFAULT_CALLBACK,
+  DEFAULT_SLIPPAGE_PERCENTAGE,
 } from "../utils";
 
 let shouldContinueRunning = true;
@@ -35,6 +36,7 @@ export async function run(config: Config): Promise<void> {
     maxLunaSwapAmount = DEFAULT_MAX_SWAP_AMOUNT,
     minBlunaSwapAmount = DEFAULT_MIN_SWAP_AMOUNT,
     maxBlunaSwapAmount = DEFAULT_MAX_SWAP_AMOUNT,
+    slippagePercentage = DEFAULT_SLIPPAGE_PERCENTAGE,
     onSwapSuccess = DEFAULT_CALLBACK,
     onSwapError = DEFAULT_CALLBACK,
     debug = DEFAULT_CALLBACK,
@@ -68,10 +70,18 @@ export async function run(config: Config): Promise<void> {
         lunaBalance,
         fromMicroAmount(
           swapLunaToBlunaSimulation.contractResponse.return_amount
-        )
+        ),
+        slippagePercentage
       )
     : shouldSwapBluna
-    ? await swapBlunaToLuna(walletMnemonic, blunaBalance)
+    ? await swapBlunaToLuna(
+        walletMnemonic,
+        blunaBalance,
+        fromMicroAmount(
+          swapBlunaToLunaSimulation.contractResponse.return_amount
+        ),
+        slippagePercentage
+      )
     : undefined;
 
   if (transactionResult === undefined) {

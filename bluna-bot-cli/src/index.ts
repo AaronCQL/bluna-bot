@@ -10,6 +10,7 @@ import {
   DEFAULT_MAX_PERCENTAGE_LOSS,
   DEFAULT_MIN_SWAP_AMOUNT,
   DEFAULT_MAX_SWAP_AMOUNT,
+  DEFAULT_SLIPPAGE_PERCENTAGE,
   Config,
   run,
 } from "bluna-bot-pkg";
@@ -78,6 +79,12 @@ function initConfig() {
       Number,
       DEFAULT_MAX_SWAP_AMOUNT
     )
+    .option(
+      "--slippage <percentage>",
+      "percentage slippage when swapping",
+      Number,
+      DEFAULT_SLIPPAGE_PERCENTAGE
+    )
     .option("--stop-on-errors", "stops program on unknown errors")
     .option("--verbose", "prints out debug information for every run");
 }
@@ -94,6 +101,7 @@ function printConfig(
   maxLunaSwapAmount: number,
   minBlunaSwapAmount: number,
   maxBlunaSwapAmount: number,
+  slippage: number,
   stopOnErrors: boolean
 ) {
   console.log(
@@ -105,6 +113,7 @@ function printConfig(
       ` - Maximum LUNA swap amount: ${maxLunaSwapAmount}\n` +
       ` - Minimum bLUNA swap amount: ${minBlunaSwapAmount}\n` +
       ` - Maximum bLUNA swap amount: ${maxBlunaSwapAmount}\n` +
+      ` - Slippage: ${slippage}%\n` +
       ` - On encountering unknown errors: ${
         stopOnErrors ? "stop program" : "ignore and continue program"
       }\n`
@@ -149,6 +158,7 @@ async function main() {
     maxLunaSwapAmount,
     minBlunaSwapAmount,
     maxBlunaSwapAmount,
+    slippage,
     stopOnErrors,
     verbose,
   } = parseArgs();
@@ -161,6 +171,7 @@ async function main() {
     maxLunaSwapAmount,
     minBlunaSwapAmount,
     maxBlunaSwapAmount,
+    slippage,
     stopOnErrors
   );
 
@@ -174,6 +185,7 @@ async function main() {
     maxLunaSwapAmount: maxLunaSwapAmount,
     minBlunaSwapAmount: minBlunaSwapAmount,
     maxBlunaSwapAmount: maxBlunaSwapAmount,
+    slippagePercentage: slippage,
     debug: (info) => {
       if (verbose) {
         console.log("debug:", info, "\n");
