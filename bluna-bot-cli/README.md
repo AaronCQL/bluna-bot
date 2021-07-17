@@ -59,6 +59,9 @@ Other than the wallet address and wallet mnemonic, all other fields are optional
 - `--max-luna-swap-amount <amount>`: maximum number of LUNA to use when swapping
 - `--min-bluna-swap-amount <amount>`: minimum number of bLUNA to use when swapping
 - `--max-bluna-swap-amount <amount>`: maximum number of bLUNA to use when swapping
+- `--slippage <percentage>`: percentage slippage to use when swapping
+  - Note: the `min-gain` and `max-loss` settings *do not* take into account the `slippage` set
+  - Terraswap's default slippage is `1`, the default slippage used in this program is `0.5`
 - `--stop-on-errors`: when present, stops execution of the program when met with any unknown errors
   - Be default, unknown errors are ignored since queries to the blockchain may occasionally throw network errors
 - `--verbose`: when present, prints out debug information for every run
@@ -73,5 +76,6 @@ bluna-bot -a "terraAddressHere" \
           --min-gain 13 \
           --max-loss 1.5 \
           --min-swap-amount 100 \
+          --slippage 0.1 \
           --verbose
 ```
